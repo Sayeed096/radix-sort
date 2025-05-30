@@ -1,6 +1,6 @@
 # Ignore by file type
 
-# Ignore enrite directories
+# Ignore entire directories
 ./bin/
 ./build/
 ./log/
