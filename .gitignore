@@ -1,0 +1,8 @@
+# Ignore by file type
+
+# Ignore enrite directories
+./bin/
+./build/
+./log/
+
+# Ignore specific files
