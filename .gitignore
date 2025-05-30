@@ -1,8 +1,10 @@
 # Ignore by file type
+*.log
 
 # Ignore entire directories
-./bin/
-./build/
-./log/
+bin/
+build/
+log/
 
 # Ignore specific files
+run.ps1
