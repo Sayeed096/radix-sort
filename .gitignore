@@ -5,6 +5,7 @@
 bin/
 build/
 log/
+.vscode/
 
 # Ignore specific files
 run.ps1

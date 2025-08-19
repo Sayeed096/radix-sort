@@ -25,33 +25,64 @@
 // Include header
 #include "radsort.h"
 #include <time.h>
+#include <string.h>
 
 // ======================================================================== //
 // Main function, the main body of the program
 // ======================================================================== //
-int main( int argc, char** argv)
+int main( int argc, char *argv[])
 {
     // Declare local variables
-    uint32_t max       = 100;   //1000000;
-    uint32_t upper     = 65535; //05000000;
-    uint32_t lower     = 1000;
+    uint32_t max       = 20;   //1000000;
+    uint64_t upper     = 65535; //05000000;
+    // uint64_t upper     = (uint64_t) 9999999999999999999; //65535; //05000000;
+    uint64_t lower     = 16300;
     uint64_t unsorted_list[max];
     uint64_t *sorted_list;
+    char s_order = 'a';
+
+    // Check if the user has provided any argument
+    printf("You have entered %d arguments:\n", argc-1);
+    for (int i = 0; i < argc; i++) {
+        printf("%s\n", argv[i]);
+    }
+    if (argc > 1) {
+        if (strcmp(argv[1], "a") == 0) {
+            printf("Sorting in ascending order.\n");
+        } else if (strcmp(argv[1], "d") == 0) {
+            printf("Sorting in descending order.\n");
+            s_order = 'd';
+        } else {
+            printf("No valid sorting order specified. Defaulting to ascending order.\n");
+        }
+    } else {
+        printf("No sorting order argument provided. Defaulting to ascending order.\n");
+    }
+    printf("selected Sorting order: %c\n", s_order);
+    
 
     // Generate unsorted list of random numbers
     srand(time(0));
+    uint64_t range = (upper - lower + 1);// >> 52;
+    printf("upper: 0x%llu, lower: 0x%llx, range: %llu\n", 
+                  upper,         lower,      range);
     for(uint32_t i = 0; i <= max; ++i) {
-        unsorted_list[i] = (rand() % (upper - lower + 1)) + lower;
+        unsorted_list[i] = ((rand() % range) /*<< 40*/) + lower;
+    //    printf("[%d]: range:%lu, \t-> %llu(0x%llx)  \n", 
+    //              i,       range, unsorted_list[i], unsorted_list[i]);
     }
     
     // Print some first and last value of unsorted list
-    print_head_tail_list(unsorted_list, max);
+    print_head_tail_list(unsorted_list, max); puts("");
 
     // Sorting the number list
-    sorted_list = radix_sort_16b(unsorted_list, max, 4, 'a');
+    sorted_list = recur_radix_sort_hNd(unsorted_list, max, 4, s_order);
+    // sorted_list = async_radix_sort_hNd(unsorted_list, max, 4, s_order);
 
     // Print sorted list
     print_head_tail_list(sorted_list, max);
+    // printf("Sorted list: %llx\n", sorted_list[0]);
 
+    free(sorted_list);
     return 0;
 }
