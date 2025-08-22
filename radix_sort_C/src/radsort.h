@@ -2,15 +2,16 @@
  * @file radsort.h
  * @author Md. Sayeed Al Masud (planetmind@outlook.com)
  * @brief Radix Sort Algorithm with different implementation
- * @version 0.2
- * @date 2025-08-19
+ * @version 0.3
+ * @date 2025-08-22
  * 
  * @details This sorting program use radix sort algorithm in a little different
  * way. In stead of copy the values from the original list of numbers, it keep 
  * the location/index of the number of the list, and put them into different 
  * buckets according to the values in the list. Then copy the numbers according
  * to sequence of bucket number and sort order.
- * Currently it supports only integer numbers upto 16,777,215 (or 0xFF_FFFF).
+ * Currently it supports only unsigned integer numbers upto 
+ * 18,446,744,073,709,551,615 (or 0xFFFF_FFFF_FFFF_FFFF).
  *
  * @remark Since shifting hexadecimal number is more faster than division of 
  * decimal number, so getting digit value of a hexadecimal number is faster 
@@ -206,29 +207,16 @@ typedef struct {
 //         const uint32_t *pos_list, uint32_t nl_sz, const uint8_t digit_h );
 
 /**
- * @brief The function merge the indices of all buckets into a single array.
- * @details The function iterate over all buckets and copy the indices from
- * each bucket into a single array. The indices are copied sequentially
- * into the array.
- *
- * @param lastL_buckets The last level of buckets of the hierarchy
- * @param indices The array of indices where the merged indices will be stored
- * @param merged_i Pointer to the index where the next merged index will be
- * stored
- *
- * @return void
- */
-// static void merge_indices( const spfifo_t *lastL_buckets, spfifo_t *soi_f );
-
-/**
  * @brief The function recursively check and merge the indices of all buckets
  * into a single array.
  *
- * @details The function first check the current digit's place value. If it is
- * less than or equal to 1, then it will merge the indices of the current
- * bucket into the array. If it's greater than 1, then it will call itself
- * recursively with the next lower digit's place value. This will continue
- * until the digit's place value is less than or equal to 1.
+ * @details The function first check number of item of the current bucket, if 
+ * single item, then store the index and skip the rest. For multiple items, 
+ * it check the current digit's place value. If it is less than or equal to 1, 
+ * then it will merge the indices of the current bucket into the array. If 
+ * it's greater than 1, then it will call itself recursively with the next 
+ * lower digit's place value. This will continue until the digit's place value 
+ * is less than or equal to 1.
  *
  * @param u_list Unsorted list
  * @param cur_bucket The current level of buckets which will be checked and

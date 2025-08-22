@@ -2,8 +2,8 @@
  * @file radsort.c
  * @author Md. Sayeed Al Masud (planetmind@outlook.com)
  * @brief Radix Sort Algorithm
- * @version 0.2
- * @date 2025-08-19
+ * @version 0.3
+ * @date 2025-08-22
  * 
  * @copyright Copyright (c) 2025
  * 
@@ -85,23 +85,6 @@ static spfifo_t* radix_pos( const uint64_t num_list [],
 // ------------------------------------------------------------------------ //
 
 // ------------------------------------------------------------------------ //
-static void merge_indices( const spfifo_t *lastL_buckets, spfifo_t *soi_f )
-{
-    // Merge the indices into a fifo sequentially from last level bucket
-    for (uint8_t m = 0; m < NUMBER_OF_BUCKETS; ++m) {
-        for (uint8_t n = 0; n < lastL_buckets[m].wp; ++n) {
-            // Take an index from the bucket and keep it into the 
-            // sequence of indices fifo (soi_f)
-            soi_f->fdata[(soi_f->wp)++] = lastL_buckets[m].fdata[n];
-            #ifdef DEBUG_L2
-            printf("\t->Number of merged indices(ios): %u\n", soi_f->wp);
-            #endif
-        }
-    }
-}
-// ------------------------------------------------------------------------ //
-
-// ------------------------------------------------------------------------ //
 static void recur_bucket_merge(const uint64_t u_list[], 
         const spfifo_t *cur_buckets, const uint8_t cur_digit_h, 
         spfifo_t *soi_f )
@@ -121,12 +104,21 @@ static void recur_bucket_merge(const uint64_t u_list[],
             u_list, cur_buckets[bl].fdata, cur_buckets[bl].wp, cur_digit_h
         );
         if (cur_digit_h <= 1) {
-            merge_indices(newL_buckets, soi_f);
-        } else {
+            // For last level of buckets, keep all indices in seq. of indices
+            for (uint8_t m = 0; m < NUMBER_OF_BUCKETS; ++m) {
+                for (uint8_t n = 0; n < newL_buckets[m].wp; ++n) {
+                    soi_f->fdata[(soi_f->wp)++] = newL_buckets[m].fdata[n];
+                    #ifdef DEBUG_L2
+                    printf("\t->Number of merged indices(ios): %u\n",
+                        soi_f->wp);
+                    #endif
+                }
+            }
+        } else {  // cur_digit_h > 1
             recur_bucket_merge(
                 u_list, newL_buckets, (cur_digit_h-1), soi_f
             );
-        }        
+        }
         free_buckets(newL_buckets, NUMBER_OF_BUCKETS);
     }
 }
@@ -250,6 +242,10 @@ uint64_t* recur_radix_sort_hNd( const uint64_t u_list [], uint32_t l_size,
     free_buckets(bucket_lN, NUMBER_OF_BUCKETS);  // Free the top level bucket
     #ifdef DEBUG
     puts("======== End  of bucket level blN =======");
+    for (int i = 0; i < soi_fifo.wp; i++) {
+        printf("soi_fifo[%d]-> %u \n", i, soi_fifo.fdata[i]);
+        if( i > 10 )  break;  // To avoid unnecessary print full list
+    }
     #endif
     
     // Dynamically allocate memory for sorted list which must be same size and
