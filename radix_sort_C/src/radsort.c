@@ -108,7 +108,7 @@ static void recur_bucket_merge(const uint64_t u_list[],
         if (cur_digit_h == 1) {
             // For last level of buckets, keep all indices in seq. of indices
             for (uint8_t m = 0; m < NUMBER_OF_BUCKETS; ++m) {
-                for (uint8_t n = 0; n < newL_buckets[m].wp; ++n) {
+                for (uint32_t n = 0; n < newL_buckets[m].wp; ++n) {
                     soi_f->fdata[(soi_f->wp)++] = newL_buckets[m].fdata[n];
                     #ifdef DEBUG_L2
                     printf("\t->Number of merged indices(ios): %u\n",
