@@ -2,10 +2,10 @@
  * @file radsort_main.c
  * @author Md. Sayeed Al Masud (planetmind@outlook.com)
  * @brief Radix sort for integer number
- * @version 0.1
- * @date 2022-02-13
+ * @version 0.2
+ * @date 2026-02-23
  * 
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2026
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ int main( int argc, char *argv[])
     uint64_t range = (upper - lower + 1);// >> 52;
     printf("upper: 0x%llu, lower: 0x%llx, range: %llu\n", 
                   upper,         lower,      range);
-    for(uint32_t i = 0; i <= max; ++i) {
+    for(uint32_t i = 0; i < max; ++i) {
         unsorted_list[i] = ((rand() % range) /*<< 40*/) + lower;
     //    printf("[%d]: range:%lu, \t-> %llu(0x%llx)  \n", 
     //              i,       range, unsorted_list[i], unsorted_list[i]);
