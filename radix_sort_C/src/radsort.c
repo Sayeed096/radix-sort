@@ -2,10 +2,10 @@
  * @file radsort.c
  * @author Md. Sayeed Al Masud (planetmind@outlook.com)
  * @brief Radix Sort Algorithm
- * @version 0.3
- * @date 2025-08-22
+ * @version 0.4
+ * @date 2026-02-23
  * 
- * @copyright Copyright (c) 2025
+ * @copyright Copyright (c) 2026
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,7 @@ static void recur_bucket_merge(const uint64_t u_list[],
         const spfifo_t *cur_buckets, const uint8_t cur_digit_h, 
         spfifo_t *soi_f )
 {
+    if (cur_buckets == NULL) return;
     if (cur_digit_h == 0 || cur_digit_h > 15) return;
     for (uint8_t bl = 0; bl < NUMBER_OF_BUCKETS; ++bl) {
         if (cur_buckets[bl].wp == 0) continue; // skip it for empty bucket
@@ -103,7 +104,8 @@ static void recur_bucket_merge(const uint64_t u_list[],
         spfifo_t *newL_buckets = radix_pos(
             u_list, cur_buckets[bl].fdata, cur_buckets[bl].wp, cur_digit_h
         );
-        if (cur_digit_h <= 1) {
+        if (newL_buckets == NULL) continue;  // if failed allocating memory
+        if (cur_digit_h == 1) {
             // For last level of buckets, keep all indices in seq. of indices
             for (uint8_t m = 0; m < NUMBER_OF_BUCKETS; ++m) {
                 for (uint8_t n = 0; n < newL_buckets[m].wp; ++n) {
@@ -115,9 +117,7 @@ static void recur_bucket_merge(const uint64_t u_list[],
                 }
             }
         } else {  // cur_digit_h > 1
-            recur_bucket_merge(
-                u_list, newL_buckets, (cur_digit_h-1), soi_f
-            );
+            recur_bucket_merge(u_list, newL_buckets, (cur_digit_h-1), soi_f);
         }
         free_buckets(newL_buckets, NUMBER_OF_BUCKETS);
     }
@@ -233,6 +233,7 @@ uint64_t* recur_radix_sort_hNd( const uint64_t u_list [], uint32_t l_size,
     #endif
     // Make top level buckets by the value of number of digit
     spfifo_t *bucket_lN = radix_pos(u_list, NULL, l_size, digit_h_N);
+    if (bucket_lN == NULL) return NULL; // if memory allocation fail
     #ifdef DEBUG
     puts("End of top level buckets making.");
     //getchar();
@@ -285,6 +286,7 @@ static void async_recur_bucket_merge( thread_args_t *const targs )
      */
     if (targs->digit_h_N == 0 ||
         targs->digit_h_N > 15 || 
+        targs->bucket == NULL ||
         targs->bucket->wp == 0
     )  return;
     if (targs->bucket->wp == 1) {
@@ -299,7 +301,7 @@ static void async_recur_bucket_merge( thread_args_t *const targs )
         targs->u_list, targs->bucket->fdata, targs->bucket->wp, 
         targs->digit_h_N
     );
-    recur_bucket_merge(
+    if (newL_buckets != NULL) recur_bucket_merge(
         targs->u_list, newL_buckets, (targs->digit_h_N-1), targs->soi_f
     );
     free_buckets(newL_buckets, NUMBER_OF_BUCKETS);
@@ -359,6 +361,7 @@ uint64_t* async_radix_sort_hNd( const uint64_t u_list [], uint32_t l_size,
     #endif
     // Make top level bucket by the value of number of digit
     spfifo_t *bucket_lN = radix_pos(u_list, NULL, l_size, digit_h_N);
+    if (bucket_lN == NULL) return NULL;
     #ifdef DEBUG
     puts("End of top level buckets making.");
     //getchar();

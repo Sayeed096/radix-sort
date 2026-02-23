@@ -2,8 +2,8 @@
  * @file radsort.h
  * @author Md. Sayeed Al Masud (planetmind@outlook.com)
  * @brief Radix Sort Algorithm with different implementation
- * @version 0.3
- * @date 2025-08-22
+ * @version 0.4
+ * @date 2025-02-23
  * 
  * @details This sorting program use radix sort algorithm in a little different
  * way. In stead of copy the values from the original list of numbers, it keep 
@@ -17,7 +17,7 @@
  * decimal number, so getting digit value of a hexadecimal number is faster 
  * than decimals number.
  * 
- * @copyright Copyright (c) 2025
+ * @copyright Copyright (c) 2026
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
