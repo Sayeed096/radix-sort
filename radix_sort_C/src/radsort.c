@@ -233,7 +233,10 @@ uint64_t* recur_radix_sort_hNd( const uint64_t u_list [], uint32_t l_size,
     #endif
     // Make top level buckets by the value of number of digit
     spfifo_t *bucket_lN = radix_pos(u_list, NULL, l_size, digit_h_N);
-    if (bucket_lN == NULL) return NULL; // if memory allocation fail
+    if (bucket_lN == NULL) {
+        free(soi_fifo.fdata);  soi_fifo.fdata = NULL;
+        return NULL;
+    }
     #ifdef DEBUG
     puts("End of top level buckets making.");
     //getchar();
@@ -269,6 +272,7 @@ uint64_t* recur_radix_sort_hNd( const uint64_t u_list [], uint32_t l_size,
         for(uint32_t i = 0; i < soi_fifo.wp; ++i)
             s_list[i] = u_list[soi_fifo.fdata[i]];
     }
+    free(soi_fifo.fdata);  soi_fifo.fdata = NULL;
     return s_list;
 }
 // ------------------------------------------------------------------------ //
